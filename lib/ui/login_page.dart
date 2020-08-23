@@ -5,6 +5,7 @@ import 'package:flutter/material.dart' as prefix0;
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:email_validator/email_validator.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 
 class LoginPage extends StatefulWidget {
   LoginPage({Key key}) : super(key: key);
@@ -22,7 +23,9 @@ class _LoginPageState extends State<LoginPage>
 
   final FocusNode myFocusNodePassword = FocusNode();
   final FocusNode myFocusNodeEmail = FocusNode();
-  final FocusNode myFocusNodeName = FocusNode();
+  final FocusNode myFocusNodeFirstName = FocusNode();
+  final FocusNode myFocusNodeLastName = FocusNode();
+  final FocusNode myFocusNodeCompanyName = FocusNode();
 
   TextEditingController loginEmailController = new TextEditingController();
   TextEditingController loginPasswordController = new TextEditingController();
@@ -128,7 +131,9 @@ class _LoginPageState extends State<LoginPage>
   void dispose() {
     myFocusNodePassword.dispose();
     myFocusNodeEmail.dispose();
-    myFocusNodeName.dispose();
+    myFocusNodeFirstName.dispose();
+    myFocusNodeLastName.dispose();
+    myFocusNodeCompanyName.dispose();
     _pageController?.dispose();
     super.dispose();
   }
@@ -341,17 +346,13 @@ class _LoginPageState extends State<LoginPage>
                     onPressed: () {
                       if (loginEmailController.text.isEmpty ||
                           loginPasswordController.text.isEmpty) {
-                        showInSnackBar("Field Cannot be Empty !!!");
+                        showInSnackBar("Field Cannot be Empty ");
                       } else {
                         final bool isValid =
                             EmailValidator.validate(loginEmailController.text);
 
                         if (isValid) {
-                          if (_termsAndConditions.toString() == "true") {
-                            showInSnackBar("Loging...");
-                          } else {
-                            showInSnackBar("Agree to The Policy...");
-                          }
+                          showInSnackBar("Loging...");
                         } else {
                           showInSnackBar("Wrong Email");
                         }
@@ -363,7 +364,9 @@ class _LoginPageState extends State<LoginPage>
           Padding(
             padding: EdgeInsets.only(top: 10.0),
             child: FlatButton(
-                onPressed: () {},
+                onPressed: () {
+                  _openPopup(context);
+                },
                 child: Text(
                   "Forgot Password?",
                   style: TextStyle(
@@ -371,7 +374,8 @@ class _LoginPageState extends State<LoginPage>
                       color: Colors.white,
                       fontSize: 16.0,
                       fontFamily: "WorkSansMedium"),
-                )),
+                )
+                ),
           ),
 //===================================================================== or ==========================================================================
 //          Padding(
@@ -464,32 +468,6 @@ class _LoginPageState extends State<LoginPage>
 //            ],
 //          ),
 //===============================================================================================================================================================
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: CheckboxListTile(
-              value: _termsAndConditions,
-              onChanged: (val) {
-                if (_termsAndConditions == false) {
-                  setState(() {
-                    _termsAndConditions = true;
-                  });
-                } else if (_termsAndConditions == true) {
-                  setState(() {
-                    _termsAndConditions = false;
-                  });
-                }
-              },
-              title: new Text(
-                'I agree to the Terms and Conditions.',
-                style: TextStyle(
-                    fontSize: 16.0,
-                    color: Colors.white,
-                    fontFamily: "WorkSansMedium"),
-              ),
-              controlAffinity: ListTileControlAffinity.leading,
-              activeColor: Colors.green,
-            ),
-          ),
         ],
       ),
     );
@@ -526,7 +504,7 @@ class _LoginPageState extends State<LoginPage>
                                 left: 25.0,
                                 right: 25.0),
                             child: TextField(
-                              focusNode: myFocusNodeName,
+                              focusNode: myFocusNodeFirstName,
                               controller: signUpFirstNameController,
                               keyboardType: TextInputType.text,
                               textCapitalization: TextCapitalization.words,
@@ -559,7 +537,7 @@ class _LoginPageState extends State<LoginPage>
                                 left: 25.0,
                                 right: 25.0),
                             child: TextField(
-                              focusNode: myFocusNodeName,
+                              focusNode: myFocusNodeLastName,
                               controller: signUpLastNameController,
                               keyboardType: TextInputType.text,
                               textCapitalization: TextCapitalization.words,
@@ -592,7 +570,7 @@ class _LoginPageState extends State<LoginPage>
                                 left: 25.0,
                                 right: 25.0),
                             child: TextField(
-                              focusNode: myFocusNodeName,
+                              focusNode: myFocusNodeCompanyName,
                               controller: signUpCompanyNameController,
                               keyboardType: TextInputType.text,
                               textCapitalization: TextCapitalization.words,
@@ -675,7 +653,7 @@ class _LoginPageState extends State<LoginPage>
                                     fontFamily: "WorkSansSemiBold",
                                     fontSize: 16.0),
                                 suffixIcon: GestureDetector(
-                                  onTap: _toggleSignup,
+                                  onTap: _toggleSignUp,
                                   child: Icon(
                                     _obscureTextSignUp
                                         ? FontAwesomeIcons.eye
@@ -716,7 +694,7 @@ class _LoginPageState extends State<LoginPage>
                                     fontFamily: "WorkSansSemiBold",
                                     fontSize: 16.0),
                                 suffixIcon: GestureDetector(
-                                  onTap: _toggleSignupConfirm,
+                                  onTap: _toggleSignUpConfirm,
                                   child: Icon(
                                     _obscureTextSignUpConfirm
                                         ? FontAwesomeIcons.eye
@@ -726,6 +704,37 @@ class _LoginPageState extends State<LoginPage>
                                   ),
                                 ),
                               ),
+                            ),
+                          ),
+                          Container(
+                            width: 250.0,
+                            height: 1.0,
+                            color: Colors.grey[400],
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: CheckboxListTile(
+                              value: _termsAndConditions,
+                              onChanged: (val) {
+                                if (_termsAndConditions == false) {
+                                  setState(() {
+                                    _termsAndConditions = true;
+                                  });
+                                } else if (_termsAndConditions == true) {
+                                  setState(() {
+                                    _termsAndConditions = false;
+                                  });
+                                }
+                              },
+                              title: new Text(
+                                'I agree to the Terms and Conditions.',
+                                style: TextStyle(
+                                    fontSize: 14.0,
+                                    color: Colors.black,
+                                    fontFamily: "WorkSansMedium"),
+                              ),
+                              controlAffinity: ListTileControlAffinity.leading,
+                              activeColor: Colors.black,
                             ),
                           ),
                         ],
@@ -776,8 +785,38 @@ class _LoginPageState extends State<LoginPage>
                                 fontFamily: "WorkSansBold"),
                           ),
                         ),
-                        onPressed: () =>
-                            showInSnackBar("SignUp button pressed")),
+                        onPressed: () {
+                          {
+                            if (signUpFirstNameController.text.isEmpty ||
+                                signUpLastNameController.text.isEmpty ||
+                                signUpCompanyNameController.text.isEmpty ||
+                                signUpEmailController.text.isEmpty ||
+                                signUpPasswordController.text.isEmpty ||
+                                signUpConfirmPasswordController.text.isEmpty) {
+                              showInSnackBar("Field Cannot be Empty ");
+                            } else {
+                              final bool isValid = EmailValidator.validate(
+                                  signUpEmailController.text);
+
+                              if (isValid) {
+                                if (_termsAndConditions.toString() == "true") {
+                                  if (signUpPasswordController.text ==
+                                      signUpConfirmPasswordController.text) {
+                                    showInSnackBar("Welcome "+signUpFirstNameController.text);
+                                    //signUpClear();
+                                    _onSignInButtonPress();
+                                  } else {
+                                    showInSnackBar("Password Not Matched");
+                                  }
+                                } else {
+                                  showInSnackBar("Agree to The Policy...");
+                                }
+                              } else {
+                                showInSnackBar("Wrong Email");
+                              }
+                            }
+                          }
+                        }),
                   ),
                 ),
               ],
@@ -788,14 +827,24 @@ class _LoginPageState extends State<LoginPage>
     );
   }
 
+  void signUpClear() {
+    signUpFirstNameController.text = "";
+    signUpLastNameController.text = "";
+    signUpCompanyNameController.text = "";
+    signUpEmailController.text = "";
+    signUpPasswordController.text = "";
+    signUpConfirmPasswordController.text = "";
+    _termsAndConditions = false;
+  }
+
   void _onSignInButtonPress() {
     _pageController.animateToPage(0,
-        duration: Duration(milliseconds: 500), curve: Curves.decelerate);
+        duration: Duration(milliseconds: 900), curve: Curves.decelerate);
   }
 
   void _onSignUpButtonPress() {
     _pageController?.animateToPage(1,
-        duration: Duration(milliseconds: 500), curve: Curves.decelerate);
+        duration: Duration(milliseconds: 900), curve: Curves.decelerate);
   }
 
   void _toggleLogin() {
@@ -804,15 +853,87 @@ class _LoginPageState extends State<LoginPage>
     });
   }
 
-  void _toggleSignup() {
+  void _toggleSignUp() {
     setState(() {
       _obscureTextSignUp = !_obscureTextSignUp;
     });
   }
 
-  void _toggleSignupConfirm() {
+  void _toggleSignUpConfirm() {
     setState(() {
       _obscureTextSignUpConfirm = !_obscureTextSignUpConfirm;
     });
+  }
+
+ void _openPopup(context) {
+   var alertStyle = AlertStyle(
+     animationType: AnimationType.fromTop,
+     isCloseButton: true,
+     isOverlayTapDismiss: false,
+     descStyle: TextStyle(fontWeight: FontWeight.normal,color: Colors.grey,fontFamily: "WorkSansMedium",fontSize: 14.0,),
+     animationDuration: Duration(milliseconds: 400),
+     alertBorder: RoundedRectangleBorder(
+       borderRadius: BorderRadius.circular(10.0),
+       side: BorderSide(
+         color: Colors.grey,
+       ),
+     ),
+     titleStyle: TextStyle(
+         color: Colors.black,
+         fontSize: 20.0,
+         fontFamily: "WorkSansMedium"),
+
+   );
+    Alert(
+        context: context,
+        style: alertStyle,
+        title: "Forgot Your Password?",
+        desc: "To recover your password, you need to enter your registered email address. We will sent the recovery code to your email",
+        content: Column(
+          children: <Widget>[
+            TextField(
+              cursorColor: Colors.grey,
+              decoration: InputDecoration(
+                  enabledBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors.grey),
+                  ),
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors.grey),
+                  ),
+                  border: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors.grey),
+                  ),
+                icon: Icon(Icons.email,color: Colors.grey),
+
+                labelText: 'Type Your Email',labelStyle: TextStyle(
+                  color:Colors.grey
+              )
+              ),
+
+            ),
+             ],
+        ),
+        buttons: [
+          DialogButton(
+            gradient: new LinearGradient(
+                colors: [
+                  Theme.Colors.loginGradientEnd,
+                  Theme.Colors.loginGradientStart
+                ],
+                begin: const FractionalOffset(0.2, 0.2),
+                end: const FractionalOffset(1.0, 1.0),
+                stops: [0.0, 1.0],
+                tileMode: TileMode.clamp),
+            onPressed: () => Navigator.pop(context),
+            child: Text(
+              "REQUEST PASSWORD",
+
+              style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 20.0,
+                  fontFamily: "WorkSansMedium"),
+            ),
+          )
+        ]).show();
   }
 }
