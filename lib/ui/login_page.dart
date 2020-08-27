@@ -43,6 +43,8 @@ class _LoginPageState extends State<LoginPage>
   TextEditingController signUpPasswordController = new TextEditingController();
   TextEditingController signUpConfirmPasswordController =
       new TextEditingController();
+  prefix0.TextEditingController verifyEmailController =
+      new prefix0.TextEditingController();
 
   PageController _pageController;
 
@@ -374,8 +376,7 @@ class _LoginPageState extends State<LoginPage>
                       color: Colors.white,
                       fontSize: 16.0,
                       fontFamily: "WorkSansMedium"),
-                )
-                ),
+                )),
           ),
 //===================================================================== or ==========================================================================
 //          Padding(
@@ -802,7 +803,8 @@ class _LoginPageState extends State<LoginPage>
                                 if (_termsAndConditions.toString() == "true") {
                                   if (signUpPasswordController.text ==
                                       signUpConfirmPasswordController.text) {
-                                    showInSnackBar("Welcome "+signUpFirstNameController.text);
+                                    showInSnackBar("Welcome " +
+                                        signUpFirstNameController.text);
                                     //signUpClear();
                                     _onSignInButtonPress();
                                   } else {
@@ -836,15 +838,18 @@ class _LoginPageState extends State<LoginPage>
     signUpConfirmPasswordController.text = "";
     _termsAndConditions = false;
   }
+  void verifyClear(){
+    verifyEmailController.text= "";
+  }
 
   void _onSignInButtonPress() {
     _pageController.animateToPage(0,
-        duration: Duration(milliseconds: 900), curve: Curves.decelerate);
+        duration: Duration(milliseconds: 700), curve: Curves.decelerate);
   }
 
   void _onSignUpButtonPress() {
     _pageController?.animateToPage(1,
-        duration: Duration(milliseconds: 900), curve: Curves.decelerate);
+        duration: Duration(milliseconds: 700), curve: Curves.decelerate);
   }
 
   void _toggleLogin() {
@@ -865,34 +870,38 @@ class _LoginPageState extends State<LoginPage>
     });
   }
 
- void _openPopup(context) {
-   var alertStyle = AlertStyle(
-     animationType: AnimationType.fromTop,
-     isCloseButton: true,
-     isOverlayTapDismiss: false,
-     descStyle: TextStyle(fontWeight: FontWeight.normal,color: Colors.grey,fontFamily: "WorkSansMedium",fontSize: 14.0,),
-     animationDuration: Duration(milliseconds: 400),
-     alertBorder: RoundedRectangleBorder(
-       borderRadius: BorderRadius.circular(10.0),
-       side: BorderSide(
-         color: Colors.grey,
-       ),
-     ),
-     titleStyle: TextStyle(
-         color: Colors.black,
-         fontSize: 20.0,
-         fontFamily: "WorkSansMedium"),
-
-   );
+  void _openPopup(context) {
+    var alertStyle = AlertStyle(
+      animationType: AnimationType.fromTop,
+      isCloseButton:  false,
+      isOverlayTapDismiss: true,
+      descStyle: TextStyle(
+        fontWeight: FontWeight.normal,
+        color: Colors.grey,
+        fontFamily: "WorkSansMedium",
+        fontSize: 14.0,
+      ),
+      animationDuration: Duration(milliseconds: 400),
+      alertBorder: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10.0),
+        side: BorderSide(
+          color: Colors.grey,
+        ),
+      ),
+      titleStyle: TextStyle(
+          color: Colors.black, fontSize: 20.0, fontFamily: "WorkSansMedium"),
+    );
     Alert(
         context: context,
         style: alertStyle,
         title: "Forgot Your Password?",
-        desc: "To recover your password, you need to enter your registered email address. We will sent the recovery code to your email",
+        desc:
+            "To recover your password, you need to enter your registered email address. We will sent the recovery code to your email",
         content: Column(
           children: <Widget>[
             TextField(
               cursorColor: Colors.grey,
+              controller: verifyEmailController,
               decoration: InputDecoration(
                   enabledBorder: UnderlineInputBorder(
                     borderSide: BorderSide(color: Colors.grey),
@@ -903,15 +912,11 @@ class _LoginPageState extends State<LoginPage>
                   border: UnderlineInputBorder(
                     borderSide: BorderSide(color: Colors.grey),
                   ),
-                icon: Icon(Icons.email,color: Colors.grey),
-
-                labelText: 'Type Your Email',labelStyle: TextStyle(
-                  color:Colors.grey
-              )
-              ),
-
+                  icon: Icon(Icons.email, color: Colors.grey),
+                  labelText: 'Type Your Email',
+                  labelStyle: TextStyle(color: Colors.grey)),
             ),
-             ],
+          ],
         ),
         buttons: [
           DialogButton(
@@ -924,10 +929,27 @@ class _LoginPageState extends State<LoginPage>
                 end: const FractionalOffset(1.0, 1.0),
                 stops: [0.0, 1.0],
                 tileMode: TileMode.clamp),
-            onPressed: () => Navigator.pop(context),
+            onPressed: () {
+              if (verifyEmailController.text.isEmpty) {
+                Navigator.pop(context);
+                verifyClear();
+                showInSnackBar("Field Cannot be Empty ");
+              } else {
+                final bool isValid =
+                    EmailValidator.validate(verifyEmailController.text);
+                if (isValid) {
+                  verifyClear();
+                  Navigator.pop(context);
+                  showInSnackBar("New Password Send");
+                } else {
+                  verifyClear();
+                  Navigator.pop(context);
+                  showInSnackBar("Worrng Email ");
+                }
+              }
+            },
             child: Text(
               "REQUEST PASSWORD",
-
               style: TextStyle(
                   color: Colors.white,
                   fontSize: 20.0,
