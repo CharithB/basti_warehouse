@@ -4,7 +4,10 @@ import 'package:webview_flutter/webview_flutter.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:bastiwarehouse/style/theme.dart' as Theme;
 import 'dart:convert';
+
+import 'login_page.dart';
 
 class RecaptchaV2 extends StatefulWidget {
   final String apiKey;
@@ -98,49 +101,36 @@ class _RecaptchaV2State extends State<RecaptchaV2> {
     return controller.visible
         ? Stack(
             children: <Widget>[
+              SizedBox(height: 30),
               Padding(
-                padding: const EdgeInsets.only(bottom: 90),
-                child: WebView(
-                  initialUrl: "${widget.pluginURL}?api_key=${widget.apiKey}",
-                  javascriptMode: JavascriptMode.unrestricted,
-                  javascriptChannels: <JavascriptChannel>[
-                    JavascriptChannel(
-                      name: 'RecaptchaFlutterChannel',
-                      onMessageReceived: (JavascriptMessage receiver) {
-                        // print(receiver.message);
-                        String _token = receiver.message;
-                        if (_token.contains("verify")) {
-                          _token = _token.substring(7);
-                        }
-                        // print(_token);
-                        verifyToken(_token);
-                      },
-                    ),
-                  ].toSet(),
-                  onWebViewCreated: (_controller) {
-                    webViewController = _controller;
-                  },
-                ),
-              ),
-              SizedBox(height: 40),
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: SizedBox(
-                  height: 60,
-                  child: Row(
-                    mainAxisSize: MainAxisSize.max,
-                    children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: RaisedButton(
-                            child: Text("CANCEL RECAPTCHA"),
-                            onPressed: () {
-                              controller.hide();
-                            },
-                          ),
-                        ),
-
-                    ],
+                padding: const EdgeInsets.only(top: 40),
+                child: Container(
+                  child: WebView(
+                    initialUrl: "${widget.pluginURL}?api_key=${widget.apiKey}",
+                    javascriptMode: JavascriptMode.unrestricted,
+                    javascriptChannels: <JavascriptChannel>[
+                      JavascriptChannel(
+                        name: 'RecaptchaFlutterChannel',
+                        onMessageReceived: (JavascriptMessage receiver) {
+                          // print(receiver.message);
+                          String _token = receiver.message;
+                          if (_token.contains("verify")) {
+                            _token = _token.substring(7);
+                          }
+                          // print(_token);
+                          verifyToken(_token);
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => LoginPage()),
+                            //page redirect to UserProfile and pass logged user email
+                          );
+                        },
+                      ),
+                    ].toSet(),
+                    onWebViewCreated: (_controller) {
+                      webViewController = _controller;
+                    },
                   ),
                 ),
               ),
@@ -155,6 +145,7 @@ class RecaptchaV2Controller extends ChangeNotifier {
   List<VoidCallback> _listeners = [];
 
   bool _visible = false;
+
   bool get visible => _visible;
 
   void show() {
