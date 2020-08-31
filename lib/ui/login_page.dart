@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 import 'package:bastiwarehouse/componet/Servies.dart';
 import 'package:bastiwarehouse/componet/Users.dart';
 import 'package:bastiwarehouse/style/theme.dart' as Theme;
@@ -46,6 +47,7 @@ class _LoginPageState extends State<LoginPage>
   TextEditingController signUpPasswordController = new TextEditingController();
   TextEditingController signUpConfirmPasswordController =
       new TextEditingController();
+  TextEditingController resetPasswordController = new TextEditingController();
   TextEditingController verifyEmailController = new TextEditingController();
 
   PageController _pageController;
@@ -55,23 +57,24 @@ class _LoginPageState extends State<LoginPage>
   Color right = Colors.white;
 
   _loginUser(User users) {
-    print(loginEmailController.text);
-    print(loginPasswordController.text);
-    //variable pass to the Services class
     Services.loginUser(loginEmailController.text, loginPasswordController.text)
         .then((result) {
-      final msg = json.decode(result)["message"];
-      final tokenJwt = json.decode(result)['jwt'];
-      print(msg);
-      if ('Successful login.' == msg) {
+      if (result == '200') {
         String email = loginEmailController.text;
-        String jwt = tokenJwt;
-//        Navigator.push(
-//          context,Recaptcha
-//          MaterialPageRoute(builder: (context) => UserProfile(email,jwt)),
-//          //page redirect to UserProfile and pass logged user email
-//        );
-        //Fluttertoast.showToast(msg: 'Login successfully');
+        Services.checkEmailStatus(email).then((value) {
+          if (value == '1') {
+            showInSnackBar("Login Successful");
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => ReCaptcha()),
+              //page redirect to UserProfile and pass logged user email
+            );
+          } else {
+            _verifyEmail(context);
+          }
+        });
+      } else if (result == '401') {
+        showInSnackBar("Login Failed.");
       }
     });
   }
@@ -184,13 +187,8 @@ class _LoginPageState extends State<LoginPage>
     _scaffoldKey.currentState.showSnackBar(new SnackBar(
       content: new Text(
         value,
-        textAlign: TextAlign.center,
-        style: TextStyle(
-            color: Colors.white,
-            fontSize: 16.0,
-            fontFamily: "WorkSansSemiBold"),
       ),
-      backgroundColor: Color(0xFF00CB84),
+      backgroundColor: Colors.black,
       duration: Duration(seconds: 3),
     ));
   }
@@ -394,13 +392,7 @@ class _LoginPageState extends State<LoginPage>
             padding: EdgeInsets.only(top: 10.0),
             child: FlatButton(
                 onPressed: () {
-                  //recapChaV2Controller.show();
-                  // _openPopup(context);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => ReCaptcha()),
-                    //page redirect to UserProfile and pass logged user email
-                  );
+                  _openPopup(context);
                 },
                 child: Text(
                   "Forgot Password?",
@@ -837,11 +829,11 @@ class _LoginPageState extends State<LoginPage>
                                 if (_termsAndConditions.toString() == "true") {
                                   if (signUpPasswordController.text ==
                                       signUpConfirmPasswordController.text) {
-                                    print(signUpFirstNameController.text);
-                                    print(signUpLastNameController.text);
-                                    print(signUpCompanyNameController.text);
-                                    print(signUpEmailController.text);
-                                    print(signUpPasswordController.text);
+//                                    print(signUpFirstNameController.text);
+//                                    print(signUpLastNameController.text);
+//                                    print(signUpCompanyNameController.text);
+//                                    print(signUpEmailController.text);
+//                                    print(signUpPasswordController.text);
                                     saveUserDetails();
                                   } else {
                                     showInSnackBar("Password Not Matched");
@@ -876,7 +868,7 @@ class _LoginPageState extends State<LoginPage>
   }
 
   void verifyClear() {
-    verifyEmailController.text = "";
+    resetPasswordController.text = "";
   }
 
   void _onSignInButtonPress() {
@@ -905,6 +897,137 @@ class _LoginPageState extends State<LoginPage>
     setState(() {
       _obscureTextSignUpConfirm = !_obscureTextSignUpConfirm;
     });
+  }
+
+  void _verifyEmail(context) {
+    var alertStyle = AlertStyle(
+      animationType: AnimationType.fromTop,
+      isCloseButton: false,
+      isOverlayTapDismiss: true,
+      descStyle: TextStyle(
+        fontWeight: FontWeight.normal,
+        color: Colors.grey,
+        fontFamily: "WorkSansMedium",
+        fontSize: 14.0,
+      ),
+      animationDuration: Duration(milliseconds: 400),
+      alertBorder: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10.0),
+        side: BorderSide(
+          color: Colors.grey,
+        ),
+      ),
+      titleStyle: TextStyle(
+          color: Colors.black, fontSize: 20.0, fontFamily: "WorkSansMedium"),
+    );
+    Alert(
+        context: context,
+        style: alertStyle,
+        title: "Email Verification ",
+        desc: "Please check your email and submit the verification code here ",
+        content: Column(
+          children: <Widget>[
+            TextField(
+              cursorColor: Colors.grey,
+              controller: verifyEmailController,
+              decoration: InputDecoration(
+                  enabledBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors.grey),
+                  ),
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors.grey),
+                  ),
+                  border: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors.grey),
+                  ),
+                  icon: Icon(Icons.vpn_key, color: Colors.grey),
+                  labelText: 'Enter Verification Code',
+                  labelStyle: TextStyle(color: Colors.grey)),
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: 10.0),
+              child: FlatButton(
+                  onPressed: () {
+                    Services.emailVerify(loginEmailController.text);
+                    Alert(
+                      context: context,
+                      title: "Message",
+                      desc: "Verification Email Send.",
+                      buttons: [
+                        DialogButton(
+                          gradient: new LinearGradient(
+                              colors: [
+                                Theme.Colors.loginGradientEnd,
+                                Theme.Colors.loginGradientStart
+                              ],
+                              begin: const FractionalOffset(0.2, 0.2),
+                              end: const FractionalOffset(1.0, 1.0),
+                              stops: [0.0, 1.0],
+                              tileMode: TileMode.clamp),
+                          child: Text(
+                            "OK",
+                            style: TextStyle(color: Colors.white, fontSize: 20),
+                          ),
+                          onPressed: () => Navigator.pop(context),
+                          width: 120,
+                        )
+                      ],
+                    ).show();
+                  },
+                  child: Text(
+                    "Resend the Code",
+                    style: TextStyle(
+                        decoration: TextDecoration.underline,
+                        color: Colors.red,
+                        fontSize: 16.0,
+                        fontFamily: "WorkSansMedium"),
+                  )),
+            ),
+          ],
+        ),
+        buttons: [
+          DialogButton(
+            gradient: new LinearGradient(
+                colors: [
+                  Theme.Colors.loginGradientEnd,
+                  Theme.Colors.loginGradientStart
+                ],
+                begin: const FractionalOffset(0.2, 0.2),
+                end: const FractionalOffset(1.0, 1.0),
+                stops: [0.0, 1.0],
+                tileMode: TileMode.clamp),
+            onPressed: () {
+              if (verifyEmailController.text.isEmpty) {
+                Navigator.pop(context);
+                verifyClear();
+                showInSnackBar("Field Cannot be Empty ");
+              } else {
+                Services.updateEmailStatus(
+                        loginEmailController.text, verifyEmailController.text)
+                    .then((value) {
+                  print(value);
+                  if (value == "1") {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => ReCaptcha()),
+                      //page redirect to UserProfile and pass logged user email
+                    );
+                  } else if (value == "0") {
+                    Navigator.pop(context);
+                    showInSnackBar("Verification Code Invalid");
+                  }
+                });
+              }
+            },
+            child: Text(
+              "VERIFY EMAIL",
+              style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 20.0,
+                  fontFamily: "WorkSansMedium"),
+            ),
+          ),
+        ]).show();
   }
 
   void _openPopup(context) {
@@ -938,7 +1061,7 @@ class _LoginPageState extends State<LoginPage>
           children: <Widget>[
             TextField(
               cursorColor: Colors.grey,
-              controller: verifyEmailController,
+              controller: resetPasswordController,
               decoration: InputDecoration(
                   enabledBorder: UnderlineInputBorder(
                     borderSide: BorderSide(color: Colors.grey),
@@ -967,13 +1090,13 @@ class _LoginPageState extends State<LoginPage>
                 stops: [0.0, 1.0],
                 tileMode: TileMode.clamp),
             onPressed: () {
-              if (verifyEmailController.text.isEmpty) {
+              if (resetPasswordController.text.isEmpty) {
                 Navigator.pop(context);
                 verifyClear();
                 showInSnackBar("Field Cannot be Empty ");
               } else {
                 final bool isValid =
-                    EmailValidator.validate(verifyEmailController.text);
+                    EmailValidator.validate(resetPasswordController.text);
                 if (isValid) {
                   verifyClear();
                   Navigator.pop(context);
@@ -1006,10 +1129,12 @@ class _LoginPageState extends State<LoginPage>
     ).then((result) {
       final msg = json.decode(result)["message"];
       if (msg == 'Email Already Exists.') {
-        print("Email Already Exists.");
+        showInSnackBar("Email Already Exists ");
       } else {
         showInSnackBar("Welcome " + signUpFirstNameController.text);
         //signUpClear();
+        Services.emailVerify(loginEmailController.text);
+        _verifyEmail(context);
         _onSignInButtonPress();
       }
       // Fluttertoast.showToast(msg: 'Added New User');

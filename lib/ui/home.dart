@@ -16,16 +16,15 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   Uint8List bytes = Uint8List(0);
   TextEditingController _inputController;
   TextEditingController _outputController;
 
-  void getQR () async{
+  void getQR() async {
     String cameraScanResult = await scanner.scan();
     debugPrint(cameraScanResult);
   }
-
-
 
   @override
   initState() {
@@ -34,9 +33,22 @@ class _HomeState extends State<Home> {
     this._outputController = new TextEditingController();
   }
 
+  void showInSnackBar(String value) {
+    FocusScope.of(context).requestFocus(new FocusNode());
+    _scaffoldKey.currentState?.removeCurrentSnackBar();
+    _scaffoldKey.currentState.showSnackBar(new SnackBar(
+      content: new Text(
+        value,
+      ),
+      backgroundColor: Colors.black,
+      duration: Duration(seconds: 3),
+    ));
+  }
+
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
+      key: _scaffoldKey,
       backgroundColor: Colors.grey[300],
       body: Builder(
         builder: (BuildContext context) {
@@ -51,7 +63,14 @@ class _HomeState extends State<Home> {
                       controller: this._inputController,
                       keyboardType: TextInputType.url,
                       textInputAction: TextInputAction.go,
-                      onSubmitted: (value) => _generateBarCode(value),
+                      onSubmitted: (value) {
+                        if (this._inputController.text != "") {
+                          _generateBarCode(this._inputController.text);
+                          showInSnackBar("QR Generated.");
+                        } else {
+                          showInSnackBar("Generate Code is Empty.");
+                        }
+                      },
                       decoration: InputDecoration(
                         prefixIcon: Icon(Icons.text_fields),
                         helperText:
@@ -88,12 +107,11 @@ class _HomeState extends State<Home> {
           );
         },
       ),
-      floatingActionButton: FloatingActionButton(
-
-        onPressed: () => _scanBytes(),
-        tooltip: 'Take a Photo',
-        child: const Icon(Icons.camera_alt),
-      ),
+//      floatingActionButton: FloatingActionButton(
+//        onPressed: () => _scanBytes(),
+//        tooltip: 'Take a Photo',
+//        child: const Icon(Icons.camera_alt),
+//      ),
     );
   }
 
@@ -160,17 +178,16 @@ class _HomeState extends State<Home> {
                           flex: 5,
                           child: GestureDetector(
                             onTap: () async {
-                              final success =
-                                  await ImageGallerySaver.saveImage(this.bytes);
                               SnackBar snackBar;
-                              if (success) {
-                                snackBar = new SnackBar(
-                                    content:
-                                        new Text('Successful Preservation!'));
-                                Scaffold.of(context).showSnackBar(snackBar);
-                              } else {
-                                snackBar = new SnackBar(
-                                    content: new Text('Save failed!'));
+                              try {
+                                final success = await ImageGallerySaver.saveImage(this.bytes);
+                                if (success != "") {
+                                  showInSnackBar("Successful Saved.");
+                                } else {
+                                  showInSnackBar("Save failed.");
+                                }
+                              } catch (e) {
+                                showInSnackBar("Save failed.");
                               }
                             },
                             child: Text(
@@ -214,7 +231,14 @@ class _HomeState extends State<Home> {
           child: SizedBox(
             height: 120,
             child: InkWell(
-              onTap: () => _generateBarCode(this._inputController.text),
+              onTap: () {
+                if (this._inputController.text != "") {
+                  _generateBarCode(this._inputController.text);
+                  showInSnackBar("QR Generated.");
+                } else {
+                  showInSnackBar("Generate Code is Empty.");
+                }
+              },
               child: Card(
                 child: Column(
                   children: <Widget>[
@@ -284,6 +308,7 @@ class _HomeState extends State<Home> {
   Future _scanPhoto() async {
     String barcode = await scanner.scanPhoto();
     this._outputController.text = barcode;
+    showInSnackBar("QR Scaned.");
   }
 
   Future _scanPath(String path) async {
@@ -292,7 +317,6 @@ class _HomeState extends State<Home> {
   }
 
   Future _scanBytes() async {
-    print("GG");
     File file = await ImagePicker.pickImage(source: ImageSource.camera);
     Uint8List bytes = file.readAsBytesSync();
     String barcode = await scanner.scanBytes(bytes);
