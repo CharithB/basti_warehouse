@@ -19,8 +19,8 @@ class Services {
       map["password"] = _password;
       final data = json.encode(map);
       Map<String, String> headers = {"Content-type": "application/json"};
-      final response = await http.post('https://etrendsapp.000webhostapp.com/fiverr/register.php',headers: headers,body: data);
-      //print('addUser Response: ${response.body}');
+      final response = await http.post('https://app.minor.li/basti/register.php',headers: headers,body: data);
+      print('addUser Response: ${response.body}');
       if (200 == response.statusCode) {
         return response.body;
       } else {
@@ -45,9 +45,7 @@ class Services {
       map["password"] = _password;
       final data = json.encode(map);
       Map<String, String> headers = {"Content-type": "application/json"};
-      final response = await http.post('https://etrendsapp.000webhostapp.com/fiverr/login.php',
-          headers: headers,
-          body: data);
+      final response = await http.post('https://app.minor.li/basti/login.php',headers: headers,body: data);
       print('addUser Response: ${response.body}');
         return response.statusCode.toString();
 
@@ -75,7 +73,7 @@ class Services {
       map['vCode'] = _vCode;
       final data = json.encode(map);
       Map<String, String> headers = {"Content-type": "application/json"};
-      final response = await http.post('https://etrendsapp.000webhostapp.com/fiverr/mailler.php',
+      final response = await http.post('https://app.minor.li/basti/mailler.php',
           headers: headers,
           body: data);
       print('addUser Response: ${response.body}');
@@ -100,7 +98,7 @@ class Services {
       map["email"] = _email;
       final data = json.encode(map);
       Map<String, String> headers = {"Content-type": "application/json"};
-      final response = await http.post('https://etrendsapp.000webhostapp.com/fiverr/checkVerifyStatus.php',
+      final response = await http.post('https://app.minor.li/basti/checkVerifyStatus.php',
           headers: headers,
           body: data);
       print("++++++++++++++++++++++");
@@ -128,7 +126,7 @@ class Services {
 
       final data = json.encode(map);
       Map<String, String> headers = {"Content-type": "application/json"};
-      final response = await http.post('https://etrendsapp.000webhostapp.com/fiverr/updateEmailCode.php',
+      final response = await http.post('https://app.minor.li/basti/updateEmailCode.php',
           headers: headers,
           body: data);
       print('Response: ${response.body}');

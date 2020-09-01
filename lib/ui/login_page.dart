@@ -47,7 +47,7 @@ class _LoginPageState extends State<LoginPage>
   TextEditingController signUpPasswordController = new TextEditingController();
   TextEditingController signUpConfirmPasswordController =
       new TextEditingController();
-  TextEditingController resetPasswordController = new TextEditingController();
+
   TextEditingController verifyEmailController = new TextEditingController();
 
   PageController _pageController;
@@ -56,6 +56,8 @@ class _LoginPageState extends State<LoginPage>
   Color left = Colors.black;
   Color right = Colors.white;
 
+
+  //login button function=====================================
   _loginUser(User users) {
     Services.loginUser(loginEmailController.text, loginPasswordController.text)
         .then((result) {
@@ -70,7 +72,7 @@ class _LoginPageState extends State<LoginPage>
               //page redirect to UserProfile and pass logged user email
             );
           } else {
-            _verifyEmail(context);
+            _verifyEmailLogin(context);
           }
         });
       } else if (result == '401') {
@@ -78,7 +80,7 @@ class _LoginPageState extends State<LoginPage>
       }
     });
   }
-
+//app main layout=============================================
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
@@ -180,7 +182,7 @@ class _LoginPageState extends State<LoginPage>
 
     _pageController = PageController();
   }
-
+ //notification ber ==========================================================
   void showInSnackBar(String value) {
     FocusScope.of(context).requestFocus(new FocusNode());
     _scaffoldKey.currentState?.removeCurrentSnackBar();
@@ -192,7 +194,7 @@ class _LoginPageState extends State<LoginPage>
       duration: Duration(seconds: 3),
     ));
   }
-
+// login & registration move button ==========================================
   Widget _buildMenuBar(BuildContext context) {
     return Container(
       width: 300.0,
@@ -240,7 +242,7 @@ class _LoginPageState extends State<LoginPage>
       ),
     );
   }
-
+//login screen ===============================================================
   Widget _buildSignIn(BuildContext context) {
     return Container(
       padding: EdgeInsets.only(top: 23.0),
@@ -258,78 +260,89 @@ class _LoginPageState extends State<LoginPage>
                 ),
                 child: Container(
                   width: 300.0,
-                  height: 190.0,
-                  child: Column(
-                    children: <Widget>[
-                      Padding(
-                        padding: EdgeInsets.only(
-                            top: 20.0, bottom: 20.0, left: 25.0, right: 25.0),
-                        child: TextField(
-                          focusNode: myFocusNodeEmailLogin,
-                          controller: loginEmailController,
-                          keyboardType: TextInputType.emailAddress,
-                          style: TextStyle(
-                              fontFamily: "WorkSansSemiBold",
-                              fontSize: 16.0,
-                              color: Colors.black),
-                          decoration: InputDecoration(
-                            border: InputBorder.none,
-                            icon: Icon(
-                              FontAwesomeIcons.envelope,
-                              color: Colors.black,
-                              size: 22.0,
+                  height: 200.0,
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Padding(
+                          padding: EdgeInsets.only(
+                              top: 15.0, bottom: 20.0, left: 25.0, right: 25.0),
+                          child: TextField(
+                            focusNode: myFocusNodeEmailLogin,
+                            controller: loginEmailController,
+                            keyboardType: TextInputType.emailAddress,
+                            style: TextStyle(
+                                fontFamily: "WorkSansSemiBold",
+                                fontSize: 16.0,
+                                color: Colors.black),
+                            decoration: InputDecoration(
+                              border: InputBorder.none,
+                              icon: Icon(
+                                FontAwesomeIcons.envelope,
+                                color: Colors.black,
+                                size: 22.0,
+                              ),
+                              hintText: "Email Address",
+                              hintStyle: TextStyle(
+                                  fontFamily: "WorkSansSemiBold",
+                                  fontSize: 17.0),
                             ),
-                            hintText: "Email Address",
-                            hintStyle: TextStyle(
-                                fontFamily: "WorkSansSemiBold", fontSize: 17.0),
                           ),
                         ),
-                      ),
-                      Container(
-                        width: 250.0,
-                        height: 1.0,
-                        color: Colors.grey[400],
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(
-                            top: 20.0, bottom: 20.0, left: 25.0, right: 25.0),
-                        child: TextField(
-                          focusNode: myFocusNodePasswordLogin,
-                          controller: loginPasswordController,
-                          obscureText: _obscureTextLogin,
-                          style: TextStyle(
-                              fontFamily: "WorkSansSemiBold",
-                              fontSize: 16.0,
-                              color: Colors.black),
-                          decoration: InputDecoration(
-                            border: InputBorder.none,
-                            icon: Icon(
-                              FontAwesomeIcons.key,
-                              size: 22.0,
-                              color: Colors.black,
-                            ),
-                            hintText: "Password",
-                            hintStyle: TextStyle(
-                                fontFamily: "WorkSansSemiBold", fontSize: 17.0),
-                            suffixIcon: GestureDetector(
-                              onTap: _toggleLogin,
-                              child: Icon(
-                                _obscureTextLogin
-                                    ? FontAwesomeIcons.eye
-                                    : FontAwesomeIcons.eyeSlash,
-                                size: 15.0,
+                        Container(
+                          width: 250.0,
+                          height: 1.0,
+                          color: Colors.grey[400],
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(
+                              top: 20.0, bottom: 20.0, left: 25.0, right: 25.0),
+                          child: TextField(
+                            focusNode: myFocusNodePasswordLogin,
+                            controller: loginPasswordController,
+                            obscureText: _obscureTextLogin,
+                            style: TextStyle(
+                                fontFamily: "WorkSansSemiBold",
+                                fontSize: 16.0,
+                                color: Colors.black),
+                            decoration: InputDecoration(
+                              border: InputBorder.none,
+                              icon: Icon(
+                                FontAwesomeIcons.key,
+                                size: 22.0,
                                 color: Colors.black,
+                              ),
+                              hintText: "Password",
+                              hintStyle: TextStyle(
+                                  fontFamily: "WorkSansSemiBold",
+                                  fontSize: 17.0),
+                              suffixIcon: GestureDetector(
+                                onTap: _toggleLogin,
+                                child: Icon(
+                                  _obscureTextLogin
+                                      ? FontAwesomeIcons.eye
+                                      : FontAwesomeIcons.eyeSlash,
+                                  size: 15.0,
+                                  color: Colors.black,
+                                ),
                               ),
                             ),
                           ),
                         ),
-                      ),
-                    ],
+                        Container(
+                          width: 250.0,
+                          height: 1.0,
+                          color: Colors.grey[400],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
               Container(
-                margin: EdgeInsets.only(top: 170.0),
+                margin: EdgeInsets.only(top: 188.0),
                 decoration: new BoxDecoration(
                   borderRadius: BorderRadius.all(Radius.circular(5.0)),
                   boxShadow: <BoxShadow>[
@@ -388,118 +401,11 @@ class _LoginPageState extends State<LoginPage>
               ),
             ],
           ),
-          Padding(
-            padding: EdgeInsets.only(top: 10.0),
-            child: FlatButton(
-                onPressed: () {
-                  _openPopup(context);
-                },
-                child: Text(
-                  "Forgot Password?",
-                  style: TextStyle(
-                      decoration: TextDecoration.underline,
-                      color: Colors.white,
-                      fontSize: 16.0,
-                      fontFamily: "WorkSansMedium"),
-                )),
-          ),
-
-//===================================================================== or ==========================================================================
-//          Padding(
-//            padding: EdgeInsets.only(top: 10.0),
-//            child: Row(
-//              mainAxisAlignment: MainAxisAlignment.center,
-//              children: <Widget>[
-//                Container(
-//                  decoration: BoxDecoration(
-//                    gradient: new LinearGradient(
-//                        colors: [
-//                          Colors.white10,
-//                          Colors.white,
-//                        ],
-//                        begin: const FractionalOffset(0.0, 0.0),
-//                        end: const FractionalOffset(1.0, 1.0),
-//                        stops: [0.0, 1.0],
-//                        tileMode: TileMode.clamp),
-//                  ),
-//                  width: 100.0,
-//                  height: 1.0,
-//                ),
-//                Padding(
-//                  padding: EdgeInsets.only(left: 15.0, right: 15.0),
-//                  child: Text(
-//                    "Or",
-//                    style: TextStyle(
-//                        color: Colors.white,
-//                        fontSize: 16.0,
-//                        fontFamily: "WorkSansMedium"),
-//                  ),
-//                ),
-//                Container(
-//                  decoration: BoxDecoration(
-//                    gradient: new LinearGradient(
-//                        colors: [
-//                          Colors.white,
-//                          Colors.white10,
-//                        ],
-//                        begin: const FractionalOffset(0.0, 0.0),
-//                        end: const FractionalOffset(1.0, 1.0),
-//                        stops: [0.0, 1.0],
-//                        tileMode: TileMode.clamp),
-//                  ),
-//                  width: 100.0,
-//                  height: 1.0,
-//                ),
-//              ],
-//            ),
-//          ),
-//=======================================================================================================================================================
-//=============================================Facebook and Google Buttons Disabled======================================================================
-//          Row(
-//            mainAxisAlignment: MainAxisAlignment.center,
-//            children: <Widget>[
-//              Padding(
-//                padding: EdgeInsets.only(top: 10.0, right: 40.0),
-//                child: GestureDetector(
-//                  onTap: () => showInSnackBar("Facebook button pressed"),
-//                  child: Container(
-//                    padding: const EdgeInsets.all(15.0),
-//                    decoration: new BoxDecoration(
-//                      shape: BoxShape.circle,
-//                      color: Colors.white,
-//                    ),
-//                    child: new Icon(
-//                      FontAwesomeIcons.facebookF,
-//                      color: Color(0xFF0084ff),
-//                    ),
-//                  ),
-//                ),
-//              ),
-//              Padding(
-//                padding: EdgeInsets.only(top: 10.0),
-//                child: GestureDetector(
-//                  onTap: () => showInSnackBar("Google button pressed"),
-//                  child: Container(
-//                    padding: const EdgeInsets.all(15.0),
-//                    decoration: new BoxDecoration(
-//                      shape: BoxShape.circle,
-//                      color: Colors.white,
-//                    ),
-//                    child: new Icon(
-//                      FontAwesomeIcons.google,
-//                      color: Color(0xFF0084ff),
-//                    ),
-//                  ),
-//                ),
-//              ),
-//            ],
-//          ),
-//===============================================================================================================================================================
         ],
       ),
     );
   }
-
+//registration screen ========================================================
   Widget _buildSignUp(BuildContext context) {
     return Container(
       child: Padding(
@@ -856,7 +762,7 @@ class _LoginPageState extends State<LoginPage>
       ),
     );
   }
-
+//registration text clear ====================================================
   void signUpClear() {
     signUpFirstNameController.text = "";
     signUpLastNameController.text = "";
@@ -866,40 +772,40 @@ class _LoginPageState extends State<LoginPage>
     signUpConfirmPasswordController.text = "";
     _termsAndConditions = false;
   }
-
+//verify email text clear ====================================================
   void verifyClear() {
-    resetPasswordController.text = "";
+    verifyEmailController.text = "";
   }
-
+//move to login screen =======================================================
   void _onSignInButtonPress() {
     _pageController.animateToPage(0,
         duration: Duration(milliseconds: 700), curve: Curves.decelerate);
   }
-
+//move to registration screen ================================================
   void _onSignUpButtonPress() {
     _pageController?.animateToPage(1,
         duration: Duration(milliseconds: 700), curve: Curves.decelerate);
   }
-
+//view login password ========================================================
   void _toggleLogin() {
     setState(() {
       _obscureTextLogin = !_obscureTextLogin;
     });
   }
-
+//view registration password =================================================
   void _toggleSignUp() {
     setState(() {
       _obscureTextSignUp = !_obscureTextSignUp;
     });
   }
-
+//view registration confirm password =========================================
   void _toggleSignUpConfirm() {
     setState(() {
       _obscureTextSignUpConfirm = !_obscureTextSignUpConfirm;
     });
   }
-
-  void _verifyEmail(context) {
+//email verification pop message in login screen =============================
+  void _verifyEmailLogin(context) {
     var alertStyle = AlertStyle(
       animationType: AnimationType.fromTop,
       isCloseButton: false,
@@ -999,7 +905,7 @@ class _LoginPageState extends State<LoginPage>
             onPressed: () {
               if (verifyEmailController.text.isEmpty) {
                 Navigator.pop(context);
-                verifyClear();
+
                 showInSnackBar("Field Cannot be Empty ");
               } else {
                 Services.updateEmailStatus(
@@ -1007,6 +913,8 @@ class _LoginPageState extends State<LoginPage>
                     .then((value) {
                   print(value);
                   if (value == "1") {
+                    verifyClear();
+                    signUpClear();
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => ReCaptcha()),
@@ -1029,8 +937,8 @@ class _LoginPageState extends State<LoginPage>
           ),
         ]).show();
   }
-
-  void _openPopup(context) {
+//email verification pop message in registration screen ======================
+  void _verifyEmailRegistration(context) {
     var alertStyle = AlertStyle(
       animationType: AnimationType.fromTop,
       isCloseButton: false,
@@ -1054,14 +962,13 @@ class _LoginPageState extends State<LoginPage>
     Alert(
         context: context,
         style: alertStyle,
-        title: "Forgot Your Password?",
-        desc:
-            "To recover your password, you need to enter your registered email address. We will sent the recovery code to your email",
+        title: "Email Verification ",
+        desc: "Please check your email and submit the verification code here ",
         content: Column(
           children: <Widget>[
             TextField(
               cursorColor: Colors.grey,
-              controller: resetPasswordController,
+              controller: verifyEmailController,
               decoration: InputDecoration(
                   enabledBorder: UnderlineInputBorder(
                     borderSide: BorderSide(color: Colors.grey),
@@ -1072,9 +979,48 @@ class _LoginPageState extends State<LoginPage>
                   border: UnderlineInputBorder(
                     borderSide: BorderSide(color: Colors.grey),
                   ),
-                  icon: Icon(Icons.email, color: Colors.grey),
-                  labelText: 'Type Your Email',
+                  icon: Icon(Icons.vpn_key, color: Colors.grey),
+                  labelText: 'Enter Verification Code',
                   labelStyle: TextStyle(color: Colors.grey)),
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: 10.0),
+              child: FlatButton(
+                  onPressed: () {
+                    Services.emailVerify(signUpEmailController.text);
+                    Alert(
+                      context: context,
+                      title: "Message",
+                      desc: "Verification Email Send.",
+                      buttons: [
+                        DialogButton(
+                          gradient: new LinearGradient(
+                              colors: [
+                                Theme.Colors.loginGradientEnd,
+                                Theme.Colors.loginGradientStart
+                              ],
+                              begin: const FractionalOffset(0.2, 0.2),
+                              end: const FractionalOffset(1.0, 1.0),
+                              stops: [0.0, 1.0],
+                              tileMode: TileMode.clamp),
+                          child: Text(
+                            "OK",
+                            style: TextStyle(color: Colors.white, fontSize: 20),
+                          ),
+                          onPressed: () => Navigator.pop(context),
+                          width: 120,
+                        )
+                      ],
+                    ).show();
+                  },
+                  child: Text(
+                    "Resend the Code",
+                    style: TextStyle(
+                        decoration: TextDecoration.underline,
+                        color: Colors.red,
+                        fontSize: 16.0,
+                        fontFamily: "WorkSansMedium"),
+                  )),
             ),
           ],
         ),
@@ -1090,35 +1036,41 @@ class _LoginPageState extends State<LoginPage>
                 stops: [0.0, 1.0],
                 tileMode: TileMode.clamp),
             onPressed: () {
-              if (resetPasswordController.text.isEmpty) {
+              if (verifyEmailController.text.isEmpty) {
                 Navigator.pop(context);
-                verifyClear();
+
                 showInSnackBar("Field Cannot be Empty ");
               } else {
-                final bool isValid =
-                    EmailValidator.validate(resetPasswordController.text);
-                if (isValid) {
-                  verifyClear();
-                  Navigator.pop(context);
-                  showInSnackBar("New Password Send");
-                } else {
-                  verifyClear();
-                  Navigator.pop(context);
-                  showInSnackBar("Worrng Email ");
-                }
+                Services.updateEmailStatus(
+                        signUpEmailController.text, verifyEmailController.text)
+                    .then((value) {
+                  print(value);
+                  if (value == "1") {
+                    verifyClear();
+                    signUpClear();
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => ReCaptcha()),
+                      //page redirect to UserProfile and pass logged user email
+                    );
+                  } else if (value == "0") {
+                    Navigator.pop(context);
+                    showInSnackBar("Verification Code Invalid");
+                  }
+                });
               }
             },
             child: Text(
-              "REQUEST PASSWORD",
+              "VERIFY EMAIL",
               style: TextStyle(
                   color: Colors.white,
                   fontSize: 20.0,
                   fontFamily: "WorkSansMedium"),
             ),
-          )
+          ),
         ]).show();
   }
-
+//registration button function ===============================================
   void saveUserDetails() {
     Services.addUser(
       signUpFirstNameController.text,
@@ -1132,9 +1084,9 @@ class _LoginPageState extends State<LoginPage>
         showInSnackBar("Email Already Exists ");
       } else {
         showInSnackBar("Welcome " + signUpFirstNameController.text);
-        //signUpClear();
-        Services.emailVerify(loginEmailController.text);
-        _verifyEmail(context);
+        print(signUpEmailController.text);
+        Services.emailVerify(signUpEmailController.text);
+        _verifyEmailRegistration(context);
         _onSignInButtonPress();
       }
       // Fluttertoast.showToast(msg: 'Added New User');

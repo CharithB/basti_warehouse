@@ -4,6 +4,7 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:bastiwarehouse/style/theme.dart' as Theme;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
@@ -87,6 +88,7 @@ class _HomeState extends State<Home> {
                       readOnly: true,
                       maxLines: 2,
                       decoration: InputDecoration(
+
                         prefixIcon: Icon(Icons.wrap_text),
                         helperText:
                             'The barcode or qrcode you scan will be displayed in this area.',
@@ -114,7 +116,7 @@ class _HomeState extends State<Home> {
 //      ),
     );
   }
-
+//QR code read =================================================================================
   Widget _qrCodeWidget(Uint8List bytes, BuildContext context) {
     return Padding(
       padding: EdgeInsets.all(20),
@@ -123,7 +125,9 @@ class _HomeState extends State<Home> {
         child: Column(
           children: <Widget>[
             Container(
+
               child: Row(
+
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: <Widget>[
                   Icon(Icons.verified_user, size: 18, color: Colors.green),
@@ -180,7 +184,9 @@ class _HomeState extends State<Home> {
                             onTap: () async {
                               SnackBar snackBar;
                               try {
-                                final success = await ImageGallerySaver.saveImage(this.bytes);
+                                final success =
+                                    await ImageGallerySaver.saveImage(
+                                        this.bytes);
                                 if (success != "") {
                                   showInSnackBar("Successful Saved.");
                                 } else {
@@ -205,18 +211,6 @@ class _HomeState extends State<Home> {
               ),
             ),
             Divider(height: 2, color: Colors.black26),
-            Container(
-              child: Row(
-                children: <Widget>[
-                  Icon(Icons.history, size: 16, color: Colors.black38),
-                  Text('  Generate History',
-                      style: TextStyle(fontSize: 14, color: Colors.black38)),
-                  Spacer(),
-                  Icon(Icons.chevron_right, size: 16, color: Colors.black38),
-                ],
-              ),
-              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 9),
-            )
           ],
         ),
       ),
@@ -225,12 +219,15 @@ class _HomeState extends State<Home> {
 
   Widget _buttonGroup() {
     return Row(
+
       children: <Widget>[
         Expanded(
+
           flex: 1,
           child: SizedBox(
             height: 120,
             child: InkWell(
+
               onTap: () {
                 if (this._inputController.text != "") {
                   _generateBarCode(this._inputController.text);
@@ -299,12 +296,12 @@ class _HomeState extends State<Home> {
       ],
     );
   }
-
+//Open camera and read QR ======================================================================
   Future _scan() async {
     String barcode = await scanner.scan();
     this._outputController.text = barcode;
   }
-
+//Scan QR code you already have ================================================================
   Future _scanPhoto() async {
     String barcode = await scanner.scanPhoto();
     this._outputController.text = barcode;
@@ -322,7 +319,7 @@ class _HomeState extends State<Home> {
     String barcode = await scanner.scanBytes(bytes);
     this._outputController.text = barcode;
   }
-
+//Type a name or code to create a QR code ======================================================
   Future _generateBarCode(String inputCode) async {
     Uint8List result = await scanner.generateBarCode(inputCode);
     this.setState(() => this.bytes = result);
