@@ -11,6 +11,8 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 
+import 'home.dart';
+
 class LoginPage extends StatefulWidget {
   LoginPage({Key key}) : super(key: key);
 
@@ -68,7 +70,7 @@ class _LoginPageState extends State<LoginPage>
             showInSnackBar("Login Successful");
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => ReCaptcha()),
+              MaterialPageRoute(builder: (context) => Home()),
               //page redirect to UserProfile and pass logged user email
             );
           } else {
@@ -735,11 +737,6 @@ class _LoginPageState extends State<LoginPage>
                                 if (_termsAndConditions.toString() == "true") {
                                   if (signUpPasswordController.text ==
                                       signUpConfirmPasswordController.text) {
-//                                    print(signUpFirstNameController.text);
-//                                    print(signUpLastNameController.text);
-//                                    print(signUpCompanyNameController.text);
-//                                    print(signUpEmailController.text);
-//                                    print(signUpPasswordController.text);
                                     saveUserDetails();
                                   } else {
                                     showInSnackBar("Password Not Matched");

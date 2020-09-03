@@ -6,8 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:bastiwarehouse/style/theme.dart' as Theme;
 import 'dart:convert';
-
-import 'home.dart';
 import 'login_page.dart';
 
 class RecaptchaV2 extends StatefulWidget {
@@ -122,7 +120,8 @@ class _RecaptchaV2State extends State<RecaptchaV2> {
                           verifyToken(_token);
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => Home()),
+                            MaterialPageRoute(
+                                builder: (context) => LoginPage()),
                             //page redirect to UserProfile and pass logged user email
                           );
                         },
