@@ -41,10 +41,6 @@ class _RecaptchaV2State extends State<RecaptchaV2> {
       "secret": widget.apiSecret,
       "response": token,
     });
-
-    // print("Response status: ${response.statusCode}");
-    // print("Response body: ${response.body}");
-
     if (response.statusCode == 200) {
       dynamic json = jsonDecode(response.body);
       if (json['success']) {
