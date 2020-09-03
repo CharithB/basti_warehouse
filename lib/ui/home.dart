@@ -2,7 +2,6 @@ import 'dart:typed_data';
 
 import 'dart:async';
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:bastiwarehouse/style/theme.dart' as Theme;
 import 'package:flutter/cupertino.dart';
@@ -88,7 +87,6 @@ class _HomeState extends State<Home> {
                       readOnly: true,
                       maxLines: 2,
                       decoration: InputDecoration(
-
                         prefixIcon: Icon(Icons.wrap_text),
                         helperText:
                             'The barcode or qrcode you scan will be displayed in this area.',
@@ -116,6 +114,7 @@ class _HomeState extends State<Home> {
 //      ),
     );
   }
+
 //QR code read =================================================================================
   Widget _qrCodeWidget(Uint8List bytes, BuildContext context) {
     return Padding(
@@ -125,9 +124,7 @@ class _HomeState extends State<Home> {
         child: Column(
           children: <Widget>[
             Container(
-
               child: Row(
-
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: <Widget>[
                   Icon(Icons.verified_user, size: 18, color: Colors.green),
@@ -219,15 +216,12 @@ class _HomeState extends State<Home> {
 
   Widget _buttonGroup() {
     return Row(
-
       children: <Widget>[
         Expanded(
-
           flex: 1,
           child: SizedBox(
             height: 120,
             child: InkWell(
-
               onTap: () {
                 if (this._inputController.text != "") {
                   _generateBarCode(this._inputController.text);
@@ -296,11 +290,13 @@ class _HomeState extends State<Home> {
       ],
     );
   }
+
 //Open camera and read QR ======================================================================
   Future _scan() async {
     String barcode = await scanner.scan();
     this._outputController.text = barcode;
   }
+
 //Scan QR code you already have ================================================================
   Future _scanPhoto() async {
     String barcode = await scanner.scanPhoto();
@@ -319,6 +315,7 @@ class _HomeState extends State<Home> {
     String barcode = await scanner.scanBytes(bytes);
     this._outputController.text = barcode;
   }
+
 //Type a name or code to create a QR code ======================================================
   Future _generateBarCode(String inputCode) async {
     Uint8List result = await scanner.generateBarCode(inputCode);

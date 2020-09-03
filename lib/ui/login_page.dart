@@ -58,7 +58,6 @@ class _LoginPageState extends State<LoginPage>
   Color left = Colors.black;
   Color right = Colors.white;
 
-
   //login button function=====================================
   _loginUser(User users) {
     Services.loginUser(loginEmailController.text, loginPasswordController.text)
@@ -82,6 +81,7 @@ class _LoginPageState extends State<LoginPage>
       }
     });
   }
+
 //app main layout=============================================
   @override
   Widget build(BuildContext context) {
@@ -184,7 +184,8 @@ class _LoginPageState extends State<LoginPage>
 
     _pageController = PageController();
   }
- //notification ber ==========================================================
+
+  //notification ber ==========================================================
   void showInSnackBar(String value) {
     FocusScope.of(context).requestFocus(new FocusNode());
     _scaffoldKey.currentState?.removeCurrentSnackBar();
@@ -196,6 +197,7 @@ class _LoginPageState extends State<LoginPage>
       duration: Duration(seconds: 3),
     ));
   }
+
 // login & registration move button ==========================================
   Widget _buildMenuBar(BuildContext context) {
     return Container(
@@ -244,6 +246,7 @@ class _LoginPageState extends State<LoginPage>
       ),
     );
   }
+
 //login screen ===============================================================
   Widget _buildSignIn(BuildContext context) {
     return Container(
@@ -407,6 +410,7 @@ class _LoginPageState extends State<LoginPage>
       ),
     );
   }
+
 //registration screen ========================================================
   Widget _buildSignUp(BuildContext context) {
     return Container(
@@ -759,6 +763,7 @@ class _LoginPageState extends State<LoginPage>
       ),
     );
   }
+
 //registration text clear ====================================================
   void signUpClear() {
     signUpFirstNameController.text = "";
@@ -769,38 +774,45 @@ class _LoginPageState extends State<LoginPage>
     signUpConfirmPasswordController.text = "";
     _termsAndConditions = false;
   }
+
 //verify email text clear ====================================================
   void verifyClear() {
     verifyEmailController.text = "";
   }
+
 //move to login screen =======================================================
   void _onSignInButtonPress() {
     _pageController.animateToPage(0,
         duration: Duration(milliseconds: 700), curve: Curves.decelerate);
   }
+
 //move to registration screen ================================================
   void _onSignUpButtonPress() {
     _pageController?.animateToPage(1,
         duration: Duration(milliseconds: 700), curve: Curves.decelerate);
   }
+
 //view login password ========================================================
   void _toggleLogin() {
     setState(() {
       _obscureTextLogin = !_obscureTextLogin;
     });
   }
+
 //view registration password =================================================
   void _toggleSignUp() {
     setState(() {
       _obscureTextSignUp = !_obscureTextSignUp;
     });
   }
+
 //view registration confirm password =========================================
   void _toggleSignUpConfirm() {
     setState(() {
       _obscureTextSignUpConfirm = !_obscureTextSignUpConfirm;
     });
   }
+
 //email verification pop message in login screen =============================
   void _verifyEmailLogin(context) {
     var alertStyle = AlertStyle(
@@ -934,6 +946,7 @@ class _LoginPageState extends State<LoginPage>
           ),
         ]).show();
   }
+
 //email verification pop message in registration screen ======================
   void _verifyEmailRegistration(context) {
     var alertStyle = AlertStyle(
@@ -1067,6 +1080,7 @@ class _LoginPageState extends State<LoginPage>
           ),
         ]).show();
   }
+
 //registration button function ===============================================
   void saveUserDetails() {
     Services.addUser(
