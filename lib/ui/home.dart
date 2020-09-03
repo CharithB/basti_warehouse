@@ -107,10 +107,11 @@ class _HomeState extends State<Home> {
           );
         },
       ),
+//New Camera Button
 //      floatingActionButton: FloatingActionButton(
 //        onPressed: () => _scanBytes(),
 //        tooltip: 'Take a Photo',
-//        child: const Icon(Icons.camera_alt),
+//        child: const Icon(Icons.camera_alt),;;
 //      ),
     );
   }
