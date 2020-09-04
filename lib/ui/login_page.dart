@@ -351,7 +351,7 @@ class _LoginPageState extends State<LoginPage>
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(top: 210, left: 75),
+                padding: const EdgeInsets.only(top: 210, left: 63),
                 child: CheckboxListTile(
                   value: _loginVerificationConditions,
                   onChanged: (val) {
