@@ -115,12 +115,8 @@ class _RecaptchaV2State extends State<RecaptchaV2> {
                           }
                           // print(_token);
                           verifyToken(_token);
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => LoginPage()),
-                            //page redirect to UserProfile and pass logged user email
-                          );
+                          Navigator.pop(context);
+
                         },
                       ),
                     ].toSet(),

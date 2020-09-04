@@ -7,7 +7,6 @@ import 'package:http/http.dart' as http;
 import 'package:bastiwarehouse/style/theme.dart' as Theme;
 import 'dart:convert';
 import 'home.dart';
-import 'login_page.dart';
 
 class ReCaptchaLoginV2 extends StatefulWidget {
   final String apiKey;
@@ -105,22 +104,19 @@ class _ReCaptchaLoginV2State extends State<ReCaptchaLoginV2> {
               initialUrl: "${widget.pluginURL}?api_key=${widget.apiKey}",
               javascriptMode: JavascriptMode.unrestricted,
               javascriptChannels: <JavascriptChannel>[
+
                 JavascriptChannel(
                   name: 'RecaptchaFlutterChannel',
                   onMessageReceived: (JavascriptMessage receiver) {
-                    // print(receiver.message);
+                    
                     String _token = receiver.message;
                     if (_token.contains("verify")) {
                       _token = _token.substring(7);
                     }
                     // print(_token);
                     verifyToken(_token);
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => Home()),
-                      //page redirect to UserProfile and pass logged user email
-                    );
+                    Navigator.pop(context);
+
                   },
                 ),
               ].toSet(),

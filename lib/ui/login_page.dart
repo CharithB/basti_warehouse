@@ -42,6 +42,8 @@ class _LoginPageState extends State<LoginPage>
   bool _obscureTextSignUp = true;
   bool _obscureTextSignUpConfirm = true;
   bool _termsAndConditions = false;
+  bool _loginVerificationConditions = false;
+  bool _regVerificationConditions = false;
 
   TextEditingController signUpEmailController = new TextEditingController();
   TextEditingController signUpFirstNameController = new TextEditingController();
@@ -71,7 +73,7 @@ class _LoginPageState extends State<LoginPage>
             showInSnackBar("Login Successful");
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => ReCaptchaLogin()),
+              MaterialPageRoute(builder: (context) => Home()),
               //page redirect to UserProfile and pass logged user email
             );
           } else {
@@ -100,7 +102,7 @@ class _LoginPageState extends State<LoginPage>
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height >= 775.0
                 ? MediaQuery.of(context).size.height
-                : 800.0,
+                : 870.0,
             decoration: new BoxDecoration(
               gradient: new LinearGradient(
                   colors: [
@@ -348,8 +350,40 @@ class _LoginPageState extends State<LoginPage>
                   ),
                 ),
               ),
+              Padding(
+                padding: const EdgeInsets.only(top: 210, left: 75),
+                child: CheckboxListTile(
+                  value: _loginVerificationConditions,
+                  onChanged: (val) {
+                    if (_loginVerificationConditions == false) {
+                      setState(() {
+                        _loginVerificationConditions = true;
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => ReCaptchaLogin()),
+                          //page redirect to UserProfile and pass logged user email
+                        );
+                      });
+                    } else if (_loginVerificationConditions == true) {
+                      setState(() {
+                        _loginVerificationConditions = false;
+                      });
+                    }
+                  },
+                  title: new Text(
+                    'Login User Verification',
+                    style: TextStyle(
+                        fontSize: 14.0,
+                        color: Colors.white,
+                        fontFamily: "WorkSansMedium"),
+                  ),
+                  controlAffinity: ListTileControlAffinity.leading,
+                  activeColor: Colors.black,
+                ),
+              ),
               Container(
-                margin: EdgeInsets.only(top: 188.0),
+                margin: EdgeInsets.only(top: 270.0),
                 decoration: new BoxDecoration(
                   borderRadius: BorderRadius.all(Radius.circular(5.0)),
                   boxShadow: <BoxShadow>[
@@ -394,14 +428,18 @@ class _LoginPageState extends State<LoginPage>
                           loginPasswordController.text.isEmpty) {
                         showInSnackBar("Field Cannot be Empty ");
                       } else {
-                        final bool isValid =
-                            EmailValidator.validate(loginEmailController.text);
+                        if (_loginVerificationConditions == true) {
+                          final bool isValid = EmailValidator.validate(
+                              loginEmailController.text);
 
-                        if (isValid) {
-                          _loginUser(_user);
-                          showInSnackBar("Loading...");
-                         } else {
-                          showInSnackBar("Wrong Email");
+                          if (isValid) {
+                            _loginUser(_user);
+                            showInSnackBar("Loading...");
+                          } else {
+                            showInSnackBar("Wrong Email");
+                          }
+                        } else {
+                          showInSnackBar("Check User Verification");
                         }
                       }
                     }),
@@ -684,7 +722,39 @@ class _LoginPageState extends State<LoginPage>
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.only(top: 364, left: 45),
+                  child: CheckboxListTile(
+                    value: _regVerificationConditions,
+                    onChanged: (val) {
+                      if (_regVerificationConditions == false) {
+                        setState(() {
+                          _regVerificationConditions = true;
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ReCaptcha()),
+                            //page redirect to UserProfile and pass logged user email
+                          );
+                        });
+                      } else if (_regVerificationConditions == true) {
+                        setState(() {
+                          _regVerificationConditions = false;
+                        });
+                      }
+                    },
+                    title: new Text(
+                      'Registration User Verification',
+                      style: TextStyle(
+                          fontSize: 14.0,
+                          color: Colors.white,
+                          fontFamily: "WorkSansMedium"),
+                    ),
+                    controlAffinity: ListTileControlAffinity.leading,
+                    activeColor: Colors.black,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 84.0),
                   child: Container(
                     margin: EdgeInsets.only(top: 340.0),
                     decoration: new BoxDecoration(
@@ -736,23 +806,29 @@ class _LoginPageState extends State<LoginPage>
                                 signUpConfirmPasswordController.text.isEmpty) {
                               showInSnackBar("Field Cannot be Empty ");
                             } else {
-                              final bool isValid = EmailValidator.validate(
-                                  signUpEmailController.text);
 
-                              if (isValid) {
-                                if (_termsAndConditions.toString() == "true") {
-                                  if (signUpPasswordController.text ==
-                                      signUpConfirmPasswordController.text) {
-                                    saveUserDetails();
+                              if(_regVerificationConditions==true){
+                                final bool isValid = EmailValidator.validate(
+                                    signUpEmailController.text);
+
+                                if (isValid) {
+                                  if (_termsAndConditions.toString() == "true") {
+                                    if (signUpPasswordController.text ==
+                                        signUpConfirmPasswordController.text) {
+                                      saveUserDetails();
+                                    } else {
+                                      showInSnackBar("Password Not Matched");
+                                    }
                                   } else {
-                                    showInSnackBar("Password Not Matched");
+                                    showInSnackBar("Agree to The Policy...");
                                   }
                                 } else {
-                                  showInSnackBar("Agree to The Policy...");
+                                  showInSnackBar("Wrong Email");
                                 }
-                              } else {
-                                showInSnackBar("Wrong Email");
+                              }else{
+                                showInSnackBar("Check User Verification");
                               }
+
                             }
                           }
                         }),
@@ -932,11 +1008,11 @@ class _LoginPageState extends State<LoginPage>
                   if (value == "1") {
                     verifyClear();
                     signUpClear();
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => ReCaptchaLogin()),
-                      //page redirect to UserProfile and pass logged user email
-                    );
+//                    Navigator.push(
+//                      context,
+//                      MaterialPageRoute(builder: (context) => ReCaptchaLogin()),
+//                      //page redirect to UserProfile and pass logged user email
+//                    );
                   } else if (value == "0") {
                     Navigator.pop(context);
                     showInSnackBar("Verification Code Invalid");
@@ -1064,13 +1140,11 @@ class _LoginPageState extends State<LoginPage>
                     .then((value) {
                   print(value);
                   if (value == "1") {
-                    verifyClear();
-                    signUpClear();
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => ReCaptcha()),
-                      //page redirect to UserProfile and pass logged user email
-                    );
+                     Navigator.pop(context);
+                     verifyClear();
+                    //signUpClear();
+
+                    //Navigator.pop(context);
                   } else if (value == "0") {
                     Navigator.pop(context);
                     showInSnackBar("Verification Code Invalid");
@@ -1102,7 +1176,6 @@ class _LoginPageState extends State<LoginPage>
       if (msg == 'Email Already Exists.') {
         showInSnackBar("Email Already Exists ");
       } else {
-        print(signUpEmailController.text);
         Services.emailVerify(signUpEmailController.text);
         _verifyEmailRegistration(context);
         _onSignInButtonPress();
