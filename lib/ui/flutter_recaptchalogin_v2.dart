@@ -9,31 +9,31 @@ import 'dart:convert';
 import 'home.dart';
 import 'login_page.dart';
 
-class RecaptchaV2 extends StatefulWidget {
+class ReCaptchaLoginV2 extends StatefulWidget {
   final String apiKey;
   final String apiSecret;
   final String pluginURL = "https://recaptcha-flutter-plugin.firebaseapp.com/";
-  final RecaptchaV2Controller controller;
+  final ReCaptchaLoginV2Controller controller;
 
   final ValueChanged<bool> onVerifiedSuccessfully;
   final ValueChanged<String> onVerifiedError;
 
-  RecaptchaV2({
+  ReCaptchaLoginV2({
     this.apiKey,
     this.apiSecret,
-    RecaptchaV2Controller controller,
+    ReCaptchaLoginV2Controller controller,
     this.onVerifiedSuccessfully,
     this.onVerifiedError,
-  })  : controller = controller ?? RecaptchaV2Controller(),
+  })  : controller = controller ?? ReCaptchaLoginV2Controller(),
         assert(apiKey != null, "Google ReCaptcha API KEY is missing."),
         assert(apiSecret != null, "Google ReCaptcha API SECRET is missing.");
 
   @override
-  State<StatefulWidget> createState() => _RecaptchaV2State();
+  State<StatefulWidget> createState() => _ReCaptchaLoginV2State();
 }
 
-class _RecaptchaV2State extends State<RecaptchaV2> {
-  RecaptchaV2Controller controller;
+class _ReCaptchaLoginV2State extends State<ReCaptchaLoginV2> {
+  ReCaptchaLoginV2Controller controller;
   WebViewController webViewController;
 
   void verifyToken(String token) async {
@@ -76,7 +76,7 @@ class _RecaptchaV2State extends State<RecaptchaV2> {
   }
 
   @override
-  void didUpdateWidget(RecaptchaV2 oldWidget) {
+  void didUpdateWidget(ReCaptchaLoginV2 oldWidget) {
     if (widget.controller != oldWidget.controller) {
       oldWidget.controller.removeListener(onListen);
       controller = widget.controller;
@@ -96,47 +96,47 @@ class _RecaptchaV2State extends State<RecaptchaV2> {
   Widget build(BuildContext context) {
     return controller.visible
         ? Stack(
-            children: <Widget>[
-              SizedBox(height: 30),
-              Padding(
-                padding: const EdgeInsets.only(top: 40),
-                child: Container(
-                  child: WebView(
-                    initialUrl: "${widget.pluginURL}?api_key=${widget.apiKey}",
-                    javascriptMode: JavascriptMode.unrestricted,
-                    javascriptChannels: <JavascriptChannel>[
-                      JavascriptChannel(
-                        name: 'RecaptchaFlutterChannel',
-                        onMessageReceived: (JavascriptMessage receiver) {
-                          // print(receiver.message);
-                          String _token = receiver.message;
-                          if (_token.contains("verify")) {
-                            _token = _token.substring(7);
-                          }
-                          // print(_token);
-                          verifyToken(_token);
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => LoginPage()),
-                            //page redirect to UserProfile and pass logged user email
-                          );
-                        },
-                      ),
-                    ].toSet(),
-                    onWebViewCreated: (_controller) {
-                      webViewController = _controller;
-                    },
-                  ),
+      children: <Widget>[
+        SizedBox(height: 30),
+        Padding(
+          padding: const EdgeInsets.only(top: 40),
+          child: Container(
+            child: WebView(
+              initialUrl: "${widget.pluginURL}?api_key=${widget.apiKey}",
+              javascriptMode: JavascriptMode.unrestricted,
+              javascriptChannels: <JavascriptChannel>[
+                JavascriptChannel(
+                  name: 'RecaptchaFlutterChannel',
+                  onMessageReceived: (JavascriptMessage receiver) {
+                    // print(receiver.message);
+                    String _token = receiver.message;
+                    if (_token.contains("verify")) {
+                      _token = _token.substring(7);
+                    }
+                    // print(_token);
+                    verifyToken(_token);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => Home()),
+                      //page redirect to UserProfile and pass logged user email
+                    );
+                  },
                 ),
-              ),
-            ],
-          )
+              ].toSet(),
+              onWebViewCreated: (_controller) {
+                webViewController = _controller;
+              },
+            ),
+          ),
+        ),
+      ],
+    )
         : Container();
   }
 }
 
-class RecaptchaV2Controller extends ChangeNotifier {
+class ReCaptchaLoginV2Controller extends ChangeNotifier {
   bool isDisposed = false;
   List<VoidCallback> _listeners = [];
 

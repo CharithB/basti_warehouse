@@ -4,6 +4,7 @@ import 'package:bastiwarehouse/componet/Servies.dart';
 import 'package:bastiwarehouse/componet/Users.dart';
 import 'package:bastiwarehouse/style/theme.dart' as Theme;
 import 'package:bastiwarehouse/ui/recaptcha.dart';
+import 'package:bastiwarehouse/ui/recaptchaLogin.dart';
 import 'package:bastiwarehouse/utils/bubble_indication_painter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -11,6 +12,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 
+import 'flutter_recaptcha_v2.dart';
 import 'home.dart';
 
 class LoginPage extends StatefulWidget {
@@ -69,7 +71,7 @@ class _LoginPageState extends State<LoginPage>
             showInSnackBar("Login Successful");
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => Home()),
+              MaterialPageRoute(builder: (context) => ReCaptchaLogin()),
               //page redirect to UserProfile and pass logged user email
             );
           } else {
@@ -398,7 +400,7 @@ class _LoginPageState extends State<LoginPage>
                         if (isValid) {
                           _loginUser(_user);
                           showInSnackBar("Loading...");
-                        } else {
+                         } else {
                           showInSnackBar("Wrong Email");
                         }
                       }
@@ -780,6 +782,12 @@ class _LoginPageState extends State<LoginPage>
     verifyEmailController.text = "";
   }
 
+  //verify email text clear ====================================================
+  void loginTextClear() {
+    loginEmailController.text = "";
+    loginPasswordController.text = "";
+  }
+
 //move to login screen =======================================================
   void _onSignInButtonPress() {
     _pageController.animateToPage(0,
@@ -926,7 +934,7 @@ class _LoginPageState extends State<LoginPage>
                     signUpClear();
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => ReCaptcha()),
+                      MaterialPageRoute(builder: (context) => ReCaptchaLogin()),
                       //page redirect to UserProfile and pass logged user email
                     );
                   } else if (value == "0") {
@@ -1094,11 +1102,11 @@ class _LoginPageState extends State<LoginPage>
       if (msg == 'Email Already Exists.') {
         showInSnackBar("Email Already Exists ");
       } else {
-        showInSnackBar("Welcome " + signUpFirstNameController.text);
         print(signUpEmailController.text);
         Services.emailVerify(signUpEmailController.text);
         _verifyEmailRegistration(context);
         _onSignInButtonPress();
+        showInSnackBar("Welcome " + signUpFirstNameController.text);
       }
       // Fluttertoast.showToast(msg: 'Added New User');
     });
