@@ -89,81 +89,83 @@ class _LoginPageState extends State<LoginPage>
 //app main layout=============================================
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
-      key: _scaffoldKey,
-      body: NotificationListener<OverscrollIndicatorNotification>(
-        // ignore: missing_return
-        onNotification: (overScroll) {
-          overScroll.disallowGlow();
-        },
+    return WillPopScope(
+        onWillPop: _moveToLastScreen,
+        child: Scaffold(
+          key: _scaffoldKey,
+          body: NotificationListener<OverscrollIndicatorNotification>(
+            // ignore: missing_return
+            onNotification: (overScroll) {
+              overScroll.disallowGlow();
+            },
 
-        child: SingleChildScrollView(
-          child: Container(
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height >= 775.0
-                ? MediaQuery.of(context).size.height
-                : 870.0,
-            decoration: new BoxDecoration(
-              gradient: new LinearGradient(
-                  colors: [
-                    Theme.Colors.loginGradientStart,
-                    Theme.Colors.loginGradientEnd
+            child: SingleChildScrollView(
+              child: Container(
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height >= 775.0
+                    ? MediaQuery.of(context).size.height
+                    : 870.0,
+                decoration: new BoxDecoration(
+                  gradient: new LinearGradient(
+                      colors: [
+                        Theme.Colors.loginGradientStart,
+                        Theme.Colors.loginGradientEnd
+                      ],
+                      begin: const FractionalOffset(0.0, 0.0),
+                      end: const FractionalOffset(1.0, 1.0),
+                      stops: [0.0, 1.0],
+                      tileMode: TileMode.clamp),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.max,
+                  children: <Widget>[
+                    Padding(
+                      padding: EdgeInsets.only(top: 75.0),
+                      child: new Image(
+                          width: 250.0,
+                          height: 191.0,
+                          fit: BoxFit.fill,
+                          image: new AssetImage('assets/img/login_logo.png')),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(top: 20.0),
+                      child: _buildMenuBar(context),
+                    ),
+                    Expanded(
+                      flex: 2,
+                      child: PageView(
+                        controller: _pageController,
+                        onPageChanged: (i) {
+                          if (i == 0) {
+                            setState(() {
+                              right = Colors.white;
+                              left = Colors.black;
+                            });
+                          } else if (i == 1) {
+                            setState(() {
+                              right = Colors.black;
+                              left = Colors.white;
+                            });
+                          }
+                        },
+                        children: <Widget>[
+                          new ConstrainedBox(
+                            constraints: const BoxConstraints.expand(),
+                            child: _buildSignIn(context),
+                          ),
+                          new ConstrainedBox(
+                            constraints: const BoxConstraints.expand(),
+                            child: _buildSignUp(context),
+                          ),
+                        ],
+                      ),
+                    ),
                   ],
-                  begin: const FractionalOffset(0.0, 0.0),
-                  end: const FractionalOffset(1.0, 1.0),
-                  stops: [0.0, 1.0],
-                  tileMode: TileMode.clamp),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.max,
-              children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.only(top: 75.0),
-                  child: new Image(
-                      width: 250.0,
-                      height: 191.0,
-                      fit: BoxFit.fill,
-                      image: new AssetImage('assets/img/login_logo.png')),
                 ),
-                Padding(
-                  padding: EdgeInsets.only(top: 20.0),
-                  child: _buildMenuBar(context),
-                ),
-                Expanded(
-                  flex: 2,
-                  child: PageView(
-                    controller: _pageController,
-                    onPageChanged: (i) {
-                      if (i == 0) {
-                        setState(() {
-                          right = Colors.white;
-                          left = Colors.black;
-                        });
-                      } else if (i == 1) {
-                        setState(() {
-                          right = Colors.black;
-                          left = Colors.white;
-                        });
-                      }
-                    },
-                    children: <Widget>[
-                      new ConstrainedBox(
-                        constraints: const BoxConstraints.expand(),
-                        child: _buildSignIn(context),
-                      ),
-                      new ConstrainedBox(
-                        constraints: const BoxConstraints.expand(),
-                        child: _buildSignUp(context),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+              ),
             ),
           ),
-        ),
-      ),
-    );
+        ));
   }
 
   @override
@@ -357,13 +359,14 @@ class _LoginPageState extends State<LoginPage>
                   onChanged: (val) {
                     if (_loginVerificationConditions == false) {
                       setState(() {
-                        _loginVerificationConditions = true;
                         Navigator.push(
                           context,
                           MaterialPageRoute(
                               builder: (context) => ReCaptchaLogin()),
                           //page redirect to UserProfile and pass logged user email
                         );
+
+                        _loginVerificationConditions = true;
                       });
                     } else if (_loginVerificationConditions == true) {
                       setState(() {
@@ -806,13 +809,13 @@ class _LoginPageState extends State<LoginPage>
                                 signUpConfirmPasswordController.text.isEmpty) {
                               showInSnackBar("Field Cannot be Empty ");
                             } else {
-
-                              if(_regVerificationConditions==true){
+                              if (_regVerificationConditions == true) {
                                 final bool isValid = EmailValidator.validate(
                                     signUpEmailController.text);
 
                                 if (isValid) {
-                                  if (_termsAndConditions.toString() == "true") {
+                                  if (_termsAndConditions.toString() ==
+                                      "true") {
                                     if (signUpPasswordController.text ==
                                         signUpConfirmPasswordController.text) {
                                       saveUserDetails();
@@ -825,10 +828,9 @@ class _LoginPageState extends State<LoginPage>
                                 } else {
                                   showInSnackBar("Wrong Email");
                                 }
-                              }else{
+                              } else {
                                 showInSnackBar("Check User Verification");
                               }
-
                             }
                           }
                         }),
@@ -1140,8 +1142,8 @@ class _LoginPageState extends State<LoginPage>
                     .then((value) {
                   print(value);
                   if (value == "1") {
-                     Navigator.pop(context);
-                     verifyClear();
+                    Navigator.pop(context);
+                    verifyClear();
                     //signUpClear();
 
                     //Navigator.pop(context);
@@ -1183,5 +1185,13 @@ class _LoginPageState extends State<LoginPage>
       }
       // Fluttertoast.showToast(msg: 'Added New User');
     });
+  }
+
+  Future<bool> _moveToLastScreen() {
+    return Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => LoginPage()),
+      //page redirect to UserProfile and pass logged user email
+    );
   }
 }

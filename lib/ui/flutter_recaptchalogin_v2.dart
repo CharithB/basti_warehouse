@@ -1,5 +1,6 @@
 library flutter_recaptcha_v2;
 
+import 'package:bastiwarehouse/ui/login_page.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -16,8 +17,9 @@ class ReCaptchaLoginV2 extends StatefulWidget {
 
   final ValueChanged<bool> onVerifiedSuccessfully;
   final ValueChanged<String> onVerifiedError;
-
+  String status;
   ReCaptchaLoginV2({
+    this.status,
     this.apiKey,
     this.apiSecret,
     ReCaptchaLoginV2Controller controller,
@@ -28,10 +30,12 @@ class ReCaptchaLoginV2 extends StatefulWidget {
         assert(apiSecret != null, "Google ReCaptcha API SECRET is missing.");
 
   @override
-  State<StatefulWidget> createState() => _ReCaptchaLoginV2State();
+  State<StatefulWidget> createState() => _ReCaptchaLoginV2State(status);
 }
 
 class _ReCaptchaLoginV2State extends State<ReCaptchaLoginV2> {
+  String status;
+  _ReCaptchaLoginV2State(this.status);
   ReCaptchaLoginV2Controller controller;
   WebViewController webViewController;
 
@@ -107,17 +111,16 @@ class _ReCaptchaLoginV2State extends State<ReCaptchaLoginV2> {
 
                 JavascriptChannel(
                   name: 'RecaptchaFlutterChannel',
-                  onMessageReceived: (JavascriptMessage receiver) {
+                  onMessageReceived: (JavascriptMessage receiver) async {
                     
                     String _token = receiver.message;
                     if (_token.contains("verify")) {
-                      _token = _token.substring(7);
-                    }
-                    // print(_token);
-                    verifyToken(_token);
-                    Navigator.pop(context);
 
-                  },
+                      _token = _token.substring(7);
+                      print(_token);
+                    }
+                   verifyToken(_token);
+                    },
                 ),
               ].toSet(),
               onWebViewCreated: (_controller) {
