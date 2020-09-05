@@ -37,8 +37,6 @@ class Services {
       String _password,
       ) async {
     try {
-      print(_email);
-      print(_password);
 
       var map = Map<String, dynamic>();
       map["email"] = _email;
@@ -46,7 +44,7 @@ class Services {
       final data = json.encode(map);
       Map<String, String> headers = {"Content-type": "application/json"};
       final response = await http.post('https://app.minor.li/basti/login.php',headers: headers,body: data);
-      print('addUser Response: ${response.body}');
+      print(response.statusCode.toString());
         return response.statusCode.toString();
 
 
@@ -101,7 +99,7 @@ class Services {
       final response = await http.post('https://app.minor.li/basti/checkVerifyStatus.php',
           headers: headers,
           body: data);
-      print("++++++++++++++++++++++");
+
       print('addUser Response: ${response.body}');
       if (response.body == "1") {
         return "1";

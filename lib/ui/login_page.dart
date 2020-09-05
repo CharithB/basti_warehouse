@@ -77,11 +77,14 @@ class _LoginPageState extends State<LoginPage>
               //page redirect to UserProfile and pass logged user email
             );
           } else {
+            print(result);
             _verifyEmailLogin(context);
           }
         });
       } else if (result == '401') {
         showInSnackBar("Login Failed.");
+      }else if (result == '402') {
+        showInSnackBar("Wrong Password");
       }
     });
   }

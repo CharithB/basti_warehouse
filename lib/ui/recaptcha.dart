@@ -37,6 +37,8 @@ class _ReCaptchaState extends State<ReCaptcha> {
                 setState(() {
                   if (success) {
                     verifyResult = "You've been verified successfully.";
+                    recaptchaV2Controller.show();
+                    Navigator.pop(context);
                   } else {
                     verifyResult = "Failed to verify.";
                   }
